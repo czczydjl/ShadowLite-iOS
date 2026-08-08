@@ -1,0 +1,32 @@
+name: ShadowLite
+options:
+  deploymentTarget:
+    iOS: "15.3"
+settings:
+  base:
+    SWIFT_VERSION: "5.5"
+targets:
+  ShadowLite:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources/ShadowLite
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.ShadowLite
+        INFOPLIST_FILE: Configuration/ShadowLite-Info.plist
+        CODE_SIGN_ENTITLEMENTS: Configuration/ShadowLite.entitlements
+    dependencies:
+      - target: ShadowLiteTunnel
+        embed: true
+        codeSign: true
+  ShadowLiteTunnel:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: Sources/ShadowLiteTunnel
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.ShadowLite.ShadowLiteTunnel
+        INFOPLIST_FILE: Configuration/ShadowLiteTunnel-Info.plist
+        CODE_SIGN_ENTITLEMENTS: Configuration/ShadowLite.entitlements
