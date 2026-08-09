@@ -27,8 +27,13 @@ final class SingBoxTunnelEngine: TunnelEngine {
             let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("ShadowBoxCoreTemp", isDirectory: true)
             try FileManager.default.createDirectory(at: workingURL, withIntermediateDirectories: true)
             try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true)
-            try ShadowboxcoreCheckConfig(configContent)
-            try ShadowboxcoreStart(configContent, workingURL.path, tempURL.path)
+            var coreError: NSError?
+            guard ShadowboxcoreCheckConfig(configContent, &coreError) else {
+                throw coreError ?? TunnelError.singBoxCoreMissing
+            }
+            guard ShadowboxcoreStart(configContent, workingURL.path, tempURL.path, &coreError) else {
+                throw coreError ?? TunnelError.singBoxCoreMissing
+            }
 
             let settings = NEPacketTunnelNetworkSettings(tunnelRemoteAddress: configuration.host)
             settings.mtu = 1500
