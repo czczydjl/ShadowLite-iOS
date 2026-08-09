@@ -29,6 +29,7 @@ targets:
       - framework: ThirdParty/ShadowBoxCore/build/ShadowBoxCore.xcframework
         embed: true
         codeSign: false
+      - sdk: UIKit.framework
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.example.ShadowLite.ShadowLiteTunnel
