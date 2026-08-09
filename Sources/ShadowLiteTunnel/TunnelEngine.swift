@@ -59,7 +59,7 @@ final class SingBoxTunnelEngine: TunnelEngine {
 
     func stop(completion: @escaping () -> Void) {
         #if canImport(ShadowBoxCore)
-        _ = try? ShadowboxcoreStop()
+        _ = ShadowboxcoreStop(nil)
         #endif
         completion()
     }
