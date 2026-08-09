@@ -28,8 +28,8 @@ jobs:
           LOG_PATH="$GITHUB_WORKSPACE/build/logs/shadowboxcore-build.log"
           export PATH="$(go env GOPATH)/bin:$PATH"
           {
-            go install github.com/sagernet/gomobile/cmd/gomobile@v0.1.12
-            go install github.com/sagernet/gomobile/cmd/gobind@v0.1.12
+            go install github.com/sagernet/gomobile/cmd/gomobile@v0.1.13
+            go install github.com/sagernet/gomobile/cmd/gobind@v0.1.13
             gomobile init
             cd ThirdParty/ShadowBoxCore
             go mod tidy
@@ -41,6 +41,8 @@ jobs:
               -tags "with_gvisor,with_quic,with_wireguard,with_utls,with_naive_outbound,with_clash_api,badlinkname,tfogo_checklinkname0,with_dhcp,grpcnotrace" \
               -o build/ShadowBoxCore.xcframework \
               .
+            find build/ShadowBoxCore.xcframework -maxdepth 4 -type f | sort
+            grep -R "CheckConfig\|Start\|Stop" build/ShadowBoxCore.xcframework || true
           } 2>&1 | tee "$LOG_PATH"
 
       - name: Upload build logs
@@ -55,6 +57,8 @@ jobs:
 
       - name: Build unsigned app
         run: |
+          set -euo pipefail
+          mkdir -p build/logs
           xcodebuild \
             -project ShadowLite.xcodeproj \
             -scheme ShadowLite \
@@ -63,7 +67,7 @@ jobs:
             -derivedDataPath build/DerivedData \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
-            build
+            build 2>&1 | tee build/logs/xcodebuild.log
 
       - name: Package IPA
         run: |
