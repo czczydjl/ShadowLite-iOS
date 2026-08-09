@@ -81,8 +81,10 @@ final class NodeStore: ObservableObject {
         nodes.contains {
             $0.host == node.host &&
             $0.port == node.port &&
+            $0.protocolKind == node.protocolKind &&
             $0.method == node.method &&
-            $0.password == node.password
+            $0.password == node.password &&
+            $0.uuid == node.uuid
         }
     }
 }

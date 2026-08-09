@@ -25,6 +25,10 @@ targets:
     platform: iOS
     sources:
       - path: Sources/ShadowLiteTunnel
+    dependencies:
+      - framework: ThirdParty/ShadowBoxCore/build/ShadowBoxCore.xcframework
+        embed: true
+        codeSign: false
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.example.ShadowLite.ShadowLiteTunnel

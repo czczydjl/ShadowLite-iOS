@@ -15,7 +15,7 @@ struct ContentView: View {
                 List {
                     Section("Nodes") {
                         if store.nodes.isEmpty {
-                            Text("Add a Shadowsocks node to get started.")
+                            Text("Import a VLESS Reality or Shadowsocks node to get started.")
                                 .foregroundColor(.secondary)
                         } else {
                             ForEach(store.nodes) { node in
@@ -26,7 +26,7 @@ struct ContentView: View {
                                         VStack(alignment: .leading, spacing: 4) {
                                             Text(node.name)
                                                 .foregroundColor(.primary)
-                                            Text("\(node.host):\(node.port)")
+                                            Text("\(node.protocolKind.displayName) · \(node.host):\(node.port)")
                                                 .font(.caption)
                                                 .foregroundColor(.secondary)
                                         }

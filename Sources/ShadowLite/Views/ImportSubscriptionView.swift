@@ -73,11 +73,11 @@ struct ImportSubscriptionView: View {
             return
         }
 
-        let nodes = ShadowsocksURIParser.parseSubscription(importText)
+        let nodes = ClashSubscriptionParser.parse(importText) + ShadowsocksURIParser.parseSubscription(importText)
         parsedNodes = nodes
 
         guard !nodes.isEmpty else {
-            message = "No valid ss:// nodes were found."
+            message = "No supported VLESS or ss:// nodes were found."
             return
         }
 
@@ -95,7 +95,11 @@ struct ImportSubscriptionView: View {
             return value
         }
 
-        let (data, response) = try await URLSession.shared.data(from: url)
+        var request = URLRequest(url: url)
+        request.setValue("ClashforWindows/0.20.39", forHTTPHeaderField: "User-Agent")
+        request.setValue("*/*", forHTTPHeaderField: "Accept")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
         if let httpResponse = response as? HTTPURLResponse,
            !(200...299).contains(httpResponse.statusCode) {
             throw ImportError.badStatus(httpResponse.statusCode)

@@ -41,8 +41,16 @@ final class VPNManager: ObservableObject {
                 "name": node.name,
                 "host": node.host,
                 "port": node.port,
+                "protocolKind": node.protocolKind.rawValue,
                 "password": node.password,
-                "method": node.method
+                "method": node.method,
+                "uuid": node.uuid,
+                "flow": node.flow,
+                "tlsEnabled": node.tlsEnabled,
+                "serverName": node.serverName,
+                "fingerprint": node.fingerprint,
+                "realityPublicKey": node.realityPublicKey,
+                "realityShortID": node.realityShortID
             ]
 
             manager.protocolConfiguration = configuration

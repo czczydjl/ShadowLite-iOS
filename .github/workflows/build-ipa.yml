@@ -2,6 +2,9 @@ name: Build ShadowLite IPA
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -10,8 +13,32 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install XcodeGen
+      - name: Install build tools
         run: brew install xcodegen
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.x'
+          cache-dependency-path: ThirdParty/ShadowBoxCore/go.sum
+
+      - name: Build ShadowBoxCore framework
+        run: |
+          set -euo pipefail
+          export PATH="$(go env GOPATH)/bin:$PATH"
+          go install github.com/sagernet/gomobile/cmd/gomobile@v0.1.12
+          go install github.com/sagernet/gomobile/cmd/gobind@v0.1.12
+          gomobile init
+          cd ThirdParty/ShadowBoxCore
+          go mod tidy
+          mkdir -p build
+          gomobile bind \
+            -v \
+            -target ios \
+            -libname=ShadowBoxCore \
+            -tags "with_gvisor,with_quic,with_wireguard,with_utls,with_naive_outbound,with_clash_api,badlinkname,tfogo_checklinkname0,with_dhcp,grpcnotrace" \
+            -o build/ShadowBoxCore.xcframework \
+            .
 
       - name: Generate Xcode project
         run: xcodegen generate

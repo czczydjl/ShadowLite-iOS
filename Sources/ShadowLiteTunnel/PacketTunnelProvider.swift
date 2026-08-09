@@ -13,7 +13,7 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
             }
 
             let configuration = try TunnelConfiguration(protocolConfiguration: protocolConfiguration)
-            let engine = ProxyTunnelEngine(provider: self, configuration: configuration)
+            let engine = SingBoxTunnelEngine(provider: self, configuration: configuration)
             self.engine = engine
 
             engine.start { error in
