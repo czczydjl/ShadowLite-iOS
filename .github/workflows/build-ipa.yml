@@ -71,10 +71,26 @@ jobs:
 
       - name: Package IPA
         run: |
+          set -euo pipefail
           APP_PATH="$(find build/DerivedData -path '*Release-iphoneos/ShadowLite.app' -type d | head -n 1)"
           test -n "$APP_PATH"
           mkdir -p build/Payload
           cp -R "$APP_PATH" build/Payload/ShadowLite.app
+          APP_BUNDLE="$GITHUB_WORKSPACE/build/Payload/ShadowLite.app"
+          EXTENSION_BUNDLE="$APP_BUNDLE/PlugIns/ShadowLiteTunnel.appex"
+          ENTITLEMENTS="$GITHUB_WORKSPACE/Configuration/ShadowLite.entitlements"
+          test -d "$EXTENSION_BUNDLE"
+
+          # The IPA is installed through TrollStore without an Apple profile.
+          # Re-sign nested code ad-hoc so NetworkExtension entitlements survive installation.
+          while IFS= read -r framework; do
+            codesign --force --sign - --timestamp=none "$framework"
+          done < <(find "$EXTENSION_BUNDLE" -type d -name '*.framework' | sort -r)
+          codesign --force --sign - --entitlements "$ENTITLEMENTS" --timestamp=none "$EXTENSION_BUNDLE"
+          codesign --force --sign - --entitlements "$ENTITLEMENTS" --timestamp=none "$APP_BUNDLE"
+          codesign --verify --deep --strict --verbose=2 "$APP_BUNDLE"
+          codesign -d --entitlements :- "$APP_BUNDLE" 2>&1 | tee build/logs/app-entitlements.log
+          codesign -d --entitlements :- "$EXTENSION_BUNDLE" 2>&1 | tee build/logs/tunnel-entitlements.log
           cd build
           zip -qry ShadowLite-unsigned.ipa Payload
 
