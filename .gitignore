@@ -3,6 +3,8 @@ build/
 DerivedData/
 *.xcuserdata/
 *.ipa
+!builds/
+!builds/*.ipa
 *.app.dSYM
 *.xcarchive
 *.xcodeproj
